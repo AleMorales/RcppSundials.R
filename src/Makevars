@@ -1,0 +1,2 @@
+PKG_CXXFLAGS = -I../inst/include/ -std=c++11 -O3
+PKG_CFLAGS = -I../inst/include/ -O3

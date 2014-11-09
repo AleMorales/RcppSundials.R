@@ -1,10 +1,10 @@
 Package: RcppSundials
 Type: Package
-Title: What the package does (short line)
+Title: Wrapper around Sundials numerical library using Rcpp
 Version: 1.0
 Date: 2014-11-09
-Author: Your Name
-Maintainer: Your Name <your@email.com>
+Author: Alejandro Morales
+Maintainer: Alejandro Morales <morales.s.alejandro@gmail.com>
 Description: More about what it does (maybe more than one line)
 License: MIT
 Imports:
