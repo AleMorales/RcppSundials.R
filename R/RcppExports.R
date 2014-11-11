@@ -13,6 +13,12 @@ cvode_R <- function(times, states, parameters, forcings_data, settings, model) {
     .Call('RcppSundials_cvode_R', PACKAGE = 'RcppSundials', times, states, parameters, forcings_data, settings, model)
 }
 
+#' Simulates the model when it is written as a C++ function using stl containers
+#' @export
+cvode_Cpp_stl <- function(times, states_, parameters_, forcings_data_, settings, model_) {
+    .Call('RcppSundials_cvode_Cpp_stl', PACKAGE = 'RcppSundials', times, states_, parameters_, forcings_data_, settings, model_)
+}
+
 #' An example of model (unit test)
 #' @export
 example_model <- function(t, states, parameters, forcings) {

@@ -4,6 +4,7 @@
 #ifndef __RcppSundials_RcppExports_h__
 #define __RcppSundials_RcppExports_h__
 
+#include <RcppArmadillo.h>
 #include <Rcpp.h>
 
 namespace RcppSundials {
@@ -54,6 +55,25 @@ namespace RcppSundials {
         {
             RNGScope __rngScope;
             __result = p_cvode_R(Rcpp::wrap(times), Rcpp::wrap(states), Rcpp::wrap(parameters), Rcpp::wrap(forcings_data), Rcpp::wrap(settings), Rcpp::wrap(model));
+        }
+        if (__result.inherits("interrupted-error"))
+            throw Rcpp::internal::InterruptedException();
+        if (__result.inherits("try-error"))
+            throw Rcpp::exception(as<std::string>(__result).c_str());
+        return Rcpp::as<NumericMatrix >(__result);
+    }
+
+    inline NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_, NumericVector parameters_, List forcings_data_, List settings, SEXP model_) {
+        typedef SEXP(*Ptr_cvode_Cpp_stl)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr_cvode_Cpp_stl p_cvode_Cpp_stl = NULL;
+        if (p_cvode_Cpp_stl == NULL) {
+            validateSignature("NumericMatrix(*cvode_Cpp_stl)(NumericVector,NumericVector,NumericVector,List,List,SEXP)");
+            p_cvode_Cpp_stl = (Ptr_cvode_Cpp_stl)R_GetCCallable("RcppSundials", "RcppSundials_cvode_Cpp_stl");
+        }
+        RObject __result;
+        {
+            RNGScope __rngScope;
+            __result = p_cvode_Cpp_stl(Rcpp::wrap(times), Rcpp::wrap(states_), Rcpp::wrap(parameters_), Rcpp::wrap(forcings_data_), Rcpp::wrap(settings), Rcpp::wrap(model_));
         }
         if (__result.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();

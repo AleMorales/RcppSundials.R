@@ -2,6 +2,7 @@
 // Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #include "../inst/include/RcppSundials.h"
+#include <RcppArmadillo.h>
 #include <Rcpp.h>
 #include <string>
 #include <set>
@@ -86,6 +87,45 @@ RcppExport SEXP RcppSundials_cvode_R(SEXP timesSEXP, SEXP statesSEXP, SEXP param
     UNPROTECT(1);
     return __result;
 }
+// cvode_Cpp_stl
+NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_, NumericVector parameters_, List forcings_data_, List settings, SEXP model_);
+static SEXP RcppSundials_cvode_Cpp_stl_try(SEXP timesSEXP, SEXP states_SEXP, SEXP parameters_SEXP, SEXP forcings_data_SEXP, SEXP settingsSEXP, SEXP model_SEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::traits::input_parameter< NumericVector >::type times(timesSEXP );
+        Rcpp::traits::input_parameter< NumericVector >::type states_(states_SEXP );
+        Rcpp::traits::input_parameter< NumericVector >::type parameters_(parameters_SEXP );
+        Rcpp::traits::input_parameter< List >::type forcings_data_(forcings_data_SEXP );
+        Rcpp::traits::input_parameter< List >::type settings(settingsSEXP );
+        Rcpp::traits::input_parameter< SEXP >::type model_(model_SEXP );
+        NumericMatrix __result = cvode_Cpp_stl(times, states_, parameters_, forcings_data_, settings, model_);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP_RETURN_ERROR
+}
+RcppExport SEXP RcppSundials_cvode_Cpp_stl(SEXP timesSEXP, SEXP states_SEXP, SEXP parameters_SEXP, SEXP forcings_data_SEXP, SEXP settingsSEXP, SEXP model_SEXP) {
+    SEXP __result;
+    {
+        Rcpp::RNGScope __rngScope;
+        __result = PROTECT(RcppSundials_cvode_Cpp_stl_try(timesSEXP, states_SEXP, parameters_SEXP, forcings_data_SEXP, settingsSEXP, model_SEXP));
+    }
+    Rboolean __isInterrupt = Rf_inherits(__result, "interrupted-error");
+    if (__isInterrupt) {
+        UNPROTECT(1);
+        Rf_onintr();
+    }
+    Rboolean __isError = Rf_inherits(__result, "try-error");
+    if (__isError) {
+        SEXP __msgSEXP = Rf_asChar(__result);
+        UNPROTECT(1);
+        Rf_error(CHAR(__msgSEXP));
+    }
+    UNPROTECT(1);
+    return __result;
+}
 // example_model
 List example_model(double t, NumericVector states, NumericVector parameters, NumericVector forcings);
 RcppExport SEXP RcppSundials_example_model(SEXP tSEXP, SEXP statesSEXP, SEXP parametersSEXP, SEXP forcingsSEXP) {
@@ -111,6 +151,7 @@ static int RcppSundials_RcppExport_validate(const char* sig) {
     if (signatures.empty()) {
         signatures.insert("NumericMatrix(*cvode_Cpp)(NumericVector,NumericVector,NumericVector,List,List,SEXP)");
         signatures.insert("NumericMatrix(*cvode_R)(NumericVector,NumericVector,NumericVector,List,List,Function)");
+        signatures.insert("NumericMatrix(*cvode_Cpp_stl)(NumericVector,NumericVector,NumericVector,List,List,SEXP)");
     }
     return signatures.find(sig) != signatures.end();
 }
@@ -119,6 +160,7 @@ static int RcppSundials_RcppExport_validate(const char* sig) {
 RcppExport SEXP RcppSundials_RcppExport_registerCCallable() { 
     R_RegisterCCallable("RcppSundials", "RcppSundials_cvode_Cpp", (DL_FUNC)RcppSundials_cvode_Cpp_try);
     R_RegisterCCallable("RcppSundials", "RcppSundials_cvode_R", (DL_FUNC)RcppSundials_cvode_R_try);
+    R_RegisterCCallable("RcppSundials", "RcppSundials_cvode_Cpp_stl", (DL_FUNC)RcppSundials_cvode_Cpp_stl_try);
     R_RegisterCCallable("RcppSundials", "RcppSundials_RcppExport_validate", (DL_FUNC)RcppSundials_RcppExport_validate);
     return R_NilValue;
 }
