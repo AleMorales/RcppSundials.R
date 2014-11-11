@@ -177,7 +177,10 @@ NumericMatrix cvode_Cpp(NumericVector times, NumericVector states,
   NumericVector observed(0);
   int nder = 0;
   if(first_call.size() == 2) {
-    observed = first_call[1];
+    NumericVector temp =  first_call[1];
+    for(int i = 0; i < temp.size(); i++) {
+      observed.push_back(temp[i]);
+    }
     nder = observed.size();
   }
   NumericMatrix output(times.size(), neq + nder + 1);
@@ -262,7 +265,7 @@ NumericMatrix cvode_Cpp(NumericVector times, NumericVector states,
       for(auto j = 0; j < neq; j++) simulated_states[j] = output(i,j + 1);
       // Call the model function to retrieve total number of outputs and initial values for derived variables
       List model_call  = model(wrap(times[i]), simulated_states, parameters, forcings); 
-      observed  = model_call[1];
+      observed =  model_call[1];
       // Derived variables already stored by the interface function
       for(auto j = 0; j < nder; j++)  output(i,j + 1 + neq) = observed[j]; 
     } 
@@ -409,7 +412,10 @@ NumericMatrix cvode_R(NumericVector times, NumericVector states,
   NumericVector observed(0);
   int nder = 0;
   if(first_call.size() == 2) {
-    observed = first_call[1];
+    NumericVector temp =  first_call[1];
+    for(int i = 0; i < temp.size(); i++) {
+      observed.push_back(temp[i]);
+    }
     nder = observed.size();
   }
   NumericMatrix output(times.size(), neq + nder + 1);

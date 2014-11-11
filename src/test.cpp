@@ -10,5 +10,6 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 List example_model(double t, NumericVector states, NumericVector parameters, NumericVector forcings) {
    NumericVector derivatives = -states*parameters[0];
-   return List::create(derivatives);
+   NumericVector observed{derivatives[0]};
+   return List::create(derivatives, observed);
 }
