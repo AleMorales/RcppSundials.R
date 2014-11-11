@@ -56,13 +56,12 @@ NumericVector interpolate_list(List data, double t) {
 // Interface between cvode integrator and the model function written in Cpp
 int cvode_to_Cpp(double t, N_Vector y, N_Vector ydot, void* inputs) {
   // Cast the void pointer back to the correct data structure
-  data_Cpp* data = (data_Cpp*) inputs;
-  data = static_cast<data_Cpp*>(inputs);
+  data_Cpp* data = static_cast<data_Cpp*>(inputs);
   // Interpolate the forcings
-  NumericVector forcings;
-  if(forcings_data.size() > 0) forcings = interpolate_list(data->forcings_data, t);
+  NumericVector forcings(data->forcings_data.size());
+  if(data->forcings_data.size() > 0) forcings = interpolate_list(data->forcings_data, t);
   // Extract the states from the NV_Ith_S container
-  NumericVector states;
+  NumericVector states(data->neq);
   for(auto i = 0; i < data->neq ; i++) states[i] = NV_Ith_S(y,i);
   // Run the model
   List output = data->model(wrap(t), states, data->parameters, forcings); 
@@ -82,7 +81,7 @@ NumericMatrix cvode_Cpp(NumericVector times, NumericVector states,
   ode_in_Cpp* model =  (ode_in_Cpp *) R_ExternalPtrAddr(model_);
   // Store all inputs in the data struct
   int neq = states.size();
-  data_Cpp data_model = {parameters, forcings_data, states.size(), model};
+  data_Cpp data_model{parameters, forcings_data, neq, model};
   
   /*
    *
@@ -159,7 +158,7 @@ NumericMatrix cvode_Cpp(NumericVector times, NumericVector states,
    Make a first call to the model to check that everything is ok and retrieve the number of observed variables
    *
    */
-  NumericVector forcings;
+  NumericVector forcings(forcings_data.size());
   if(forcings_data.size() > 0) forcings = interpolate_list(forcings_data, times[0]);
   List first_call;
   try {
@@ -175,7 +174,7 @@ NumericMatrix cvode_Cpp(NumericVector times, NumericVector states,
    Fill up the output matrix with the values for the initial time
    *
    */
-  NumericVector observed;
+  NumericVector observed(0);
   int nder = 0;
   if(first_call.size() == 2) {
     observed = first_call[1];
@@ -256,7 +255,7 @@ NumericMatrix cvode_Cpp(NumericVector times, NumericVector states,
   if(nder > 0 && flag >= 0.0) {
     for(unsigned i = 1; i < times.size(); i++) {
       // Get forcings values at time 0.
-      NumericVector forcings;
+      NumericVector forcings(forcings_data.size());
       if(forcings_data.size() > 0) forcings = interpolate_list(forcings_data, times[i]);
       // Get the state variables into the_data_states
       NumericVector simulated_states(neq);
@@ -292,13 +291,12 @@ NumericMatrix cvode_Cpp(NumericVector times, NumericVector states,
  
 // Interface between cvode integrator and the model function written in R
 int cvode_to_R(double t, N_Vector y, N_Vector ydot, void* inputs) {
-  data_R* data = (data_R*) inputs;
-  data = static_cast<data_R*>(inputs);
+  data_R* data = static_cast<data_R*>(inputs);
   // Interpolate the forcings
-  NumericVector forcings;
-  if(forcings_data.size() > 0) forcings = interpolate_list(data->forcings_data, t);
+  NumericVector forcings(data->forcings_data.size());
+  if(data->forcings_data.size() > 0) forcings = interpolate_list(data->forcings_data, t);
   // Extract the states from the NV_Ith_S container
-  NumericVector states;
+  NumericVector states(data->neq);
   for(auto i = 0; i < data->neq ; i++) states[i] = NV_Ith_S(y,i);
   // Run the model
   List output = data->model(wrap(t), states, data->parameters, forcings); 
@@ -316,7 +314,7 @@ NumericMatrix cvode_R(NumericVector times, NumericVector states,
                         List settings, Function model) {
   // Store all inputs in the data struct
   int neq = states.size();
-  data_R data_model = {parameters, forcings_data, states.size(), model};
+  data_R data_model{parameters, forcings_data, neq, model};
   
   /*
    *
@@ -328,7 +326,7 @@ NumericMatrix cvode_R(NumericVector times, NumericVector states,
   for(int i = 0; i < neq; i++) {
     NV_Ith_S(y,i) = states[i];
   }
-  
+
   void *cvode_mem = nullptr;
   if(as<std::string>(settings["method"]) == "bdf") {
     cvode_mem = CVodeCreate(CV_BDF, CV_NEWTON);     
@@ -394,7 +392,7 @@ NumericMatrix cvode_R(NumericVector times, NumericVector states,
    Make a first call to the model to check that everything is ok and retrieve the number of observed variables
    *
    */
-  NumericVector forcings(0);
+  NumericVector forcings(forcings_data.size());
   if(forcings_data.size() > 0) forcings = interpolate_list(forcings_data, times[0]);
   List first_call(0);
   try {
@@ -408,7 +406,7 @@ NumericMatrix cvode_R(NumericVector times, NumericVector states,
    *
    */
   
-  NumericVector observed;
+  NumericVector observed(0);
   int nder = 0;
   if(first_call.size() == 2) {
     observed = first_call[1];
@@ -489,7 +487,7 @@ NumericMatrix cvode_R(NumericVector times, NumericVector states,
   if(nder > 0 && flag >= 0.0) {
     for(unsigned i = 1; i < times.size(); i++) {
       // Get forcings values at time 0.
-      NumericVector forcings;
+      NumericVector forcings(forcings_data.size());
       if(forcings_data.size() > 0) forcings = interpolate_list(forcings_data, times[i]);
       // Get the state variables into the_data_states
       NumericVector simulated_states(neq);
