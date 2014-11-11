@@ -3,7 +3,6 @@
 #include <nvector/nvector_serial.h>  // Serial N_Vector
 #include <cvode/cvode_dense.h>     // CVDense
 #include <datatypes.h>
-#include <math.h> 
 #include <string> 
 #include <limits> 
 #include <time.h>
@@ -255,16 +254,17 @@ NumericMatrix cvode_Cpp(NumericVector times, NumericVector states,
   // If we have observed variables we call the model function again
   if(nder > 0 && flag >= 0.0) {
     for(unsigned i = 1; i < times.size(); i++) {
-     // Get forcings values at time 0. Store by names
-     NumericVector forcings = interpolate_list(forcings_data, t);
-     // Get the state variables into the_data_states
-     NumericVector simulated_states(neq);
-     for(auto j = 0; j < neq; j++) simulated_states[j] = output(i,j + 1);
-     // Call the model function to retrieve total number of outputs and initial values for derived variables
-     List model_call  = model(wrap(times[0]), simulated_states, parameters, forcings); 
-     observed  = model_call[1];
-     // Derived variables already stored by the interface function
-     for(auto j = 0; j < nder; j++)  output(i,j + 1 + neq) = observed[j]; 
+      // Get forcings values at time 0.
+      NumericVector forcings;
+      if(forcings_data.size() > 0) forcings = interpolate_list(forcings_data, times[i]);
+      // Get the state variables into the_data_states
+      NumericVector simulated_states(neq);
+      for(auto j = 0; j < neq; j++) simulated_states[j] = output(i,j + 1);
+      // Call the model function to retrieve total number of outputs and initial values for derived variables
+      List model_call  = model(wrap(times[i]), simulated_states, parameters, forcings); 
+      observed  = model_call[1];
+      // Derived variables already stored by the interface function
+      for(auto j = 0; j < nder; j++)  output(i,j + 1 + neq) = observed[j]; 
     } 
   }
               
@@ -299,7 +299,7 @@ int cvode_to_R(double t, N_Vector y, N_Vector ydot, void* inputs) {
   NumericVector states;
   for(auto i = 0; i < data->neq ; i++) states[i] = NV_Ith_S(y,i);
   // Run the model
-  List output = data->model(t, states, data->parameters, forcings); 
+  List output = data->model(wrap(t), states, data->parameters, forcings); 
   // Return the states to the NV_Ith_S
   NumericVector derivatives = output[0];
   for(auto i = 0; i < data->neq; i++)  NV_Ith_S(ydot,i) = derivatives[i];
@@ -486,16 +486,17 @@ NumericMatrix cvode_R(NumericVector times, NumericVector states,
   // If we have observed variables we call the model function again
   if(nder > 0 && flag >= 0.0) {
     for(unsigned i = 1; i < times.size(); i++) {
-     // Get forcings values at time 0. Store by names
-     NumericVector forcings = interpolate_list(forcings_data, t);
-     // Get the state variables into the_data_states
-     NumericVector simulated_states(neq);
-     for(auto j = 0; j < neq; j++) simulated_states[j] = output(i,j + 1);
-     // Call the model function to retrieve total number of outputs and initial values for derived variables
-     List model_call  = model(times[0], simulated_states, parameters, forcings); 
-     observed  = model_call[1];
-     // Derived variables already stored by the interface function
-     for(auto j = 0; j < nder; j++)  output(i,j + 1 + neq) = observed[j]; 
+      // Get forcings values at time 0.
+      NumericVector forcings;
+      if(forcings_data.size() > 0) forcings = interpolate_list(forcings_data, times[i]);
+      // Get the state variables into the_data_states
+      NumericVector simulated_states(neq);
+      for(auto j = 0; j < neq; j++) simulated_states[j] = output(i,j + 1);
+      // Call the model function to retrieve total number of outputs and initial values for derived variables
+      List model_call  = model(wrap(times[i]), simulated_states, parameters, forcings); 
+      observed  = model_call[1];
+      // Derived variables already stored by the interface function
+      for(auto j = 0; j < nder; j++)  output(i,j + 1 + neq) = observed[j]; 
     } 
   }
                
