@@ -59,7 +59,8 @@ int cvode_to_Cpp(double t, N_Vector y, N_Vector ydot, void* inputs) {
   data_Cpp* data = (data_Cpp*) inputs;
   data = static_cast<data_Cpp*>(inputs);
   // Interpolate the forcings
-  NumericVector forcings = interpolate_list(data->forcings_data, t);
+  NumericVector forcings;
+  if(forcings_data.size() > 0) forcings = interpolate_list(data->forcings_data, t);
   // Extract the states from the NV_Ith_S container
   NumericVector states;
   for(auto i = 0; i < data->neq ; i++) states[i] = NV_Ith_S(y,i);
@@ -294,7 +295,8 @@ int cvode_to_R(double t, N_Vector y, N_Vector ydot, void* inputs) {
   data_R* data = (data_R*) inputs;
   data = static_cast<data_R*>(inputs);
   // Interpolate the forcings
-  NumericVector forcings = interpolate_list(data->forcings_data, t);
+  NumericVector forcings;
+  if(forcings_data.size() > 0) forcings = interpolate_list(data->forcings_data, t);
   // Extract the states from the NV_Ith_S container
   NumericVector states;
   for(auto i = 0; i < data->neq ; i++) states[i] = NV_Ith_S(y,i);
