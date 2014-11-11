@@ -1,3 +1,4 @@
+#include <RcppArmadillo.h>
 #include <Rcpp.h>
 #include <array>
 #include <vector>
@@ -17,6 +18,18 @@ List example_model(double t, NumericVector states, NumericVector parameters, Num
    return List::create(derivatives, observed);
 }
 
+//' An example of a model's Jacobian matrix (unit test)
+//' @export
+// [[Rcpp::export]]
+NumericMatrix example_jacobian(double t, NumericVector states, NumericVector parameters, NumericVector forcings) {
+   NumericMatrix output(states.size(), states.size());
+   for(int i = 0; i < states.size(); i++) {
+     output(i,i) = -parameters[0];
+   }
+   return output;
+}
+
+
 extern "C" {
   array<vector<double>, 2> example_model_stl(const double& t, const vector<double>& states, 
             const vector<double>& parameters, const vector<double>& forcings) {
@@ -30,4 +43,10 @@ extern "C" {
     return output;
   }
   
+  arma::mat example_jacobian_stl(const double& t, const vector<double>& states, 
+            const vector<double>& parameters, const vector<double>& forcings) {
+    arma::mat output = arma::eye(states.size(), states.size());
+    output = -parameters[0]*output;
+    return output;
+  }
 };

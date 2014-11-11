@@ -4,7 +4,7 @@
 \alias{cvode_R}
 \title{Simulates the model when it is written as a R function}
 \usage{
-cvode_R(times, states, parameters, forcings_data, settings, model)
+cvode_R(times, states, parameters, forcings_data, settings, model, jacobian)
 }
 \description{
 Simulates the model when it is written as a R function

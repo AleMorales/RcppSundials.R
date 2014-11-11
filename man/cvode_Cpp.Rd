@@ -4,7 +4,7 @@
 \alias{cvode_Cpp}
 \title{Simulates the model when it is written as a C++ function}
 \usage{
-cvode_Cpp(times, states, parameters, forcings_data, settings, model_)
+cvode_Cpp(times, states, parameters, forcings_data, settings, model_, jacobian_)
 }
 \description{
 Simulates the model when it is written as a C++ function
