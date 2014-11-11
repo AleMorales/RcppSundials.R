@@ -65,7 +65,7 @@ int cvode_to_Cpp(double t, N_Vector y, N_Vector ydot, void* inputs) {
   NumericVector states;
   for(auto i = 0; i < data->neq ; i++) states[i] = NV_Ith_S(y,i);
   // Run the model
-  List output = data->model(t, states, data->parameters, forcings); 
+  List output = data->model(wrap(t), states, data->parameters, forcings); 
   // Return the states to the NV_Ith_S
   NumericVector derivatives = output[0];
   for(auto i = 0; i < data->neq; i++)  NV_Ith_S(ydot,i) = derivatives[i];
@@ -160,10 +160,10 @@ NumericMatrix cvode_Cpp(NumericVector times, NumericVector states,
    *
    */
   NumericVector forcings;
-  if(forcings_data.size() >= 1) forcings = interpolate_list(forcings_data, times[0]);
+  if(forcings_data.size() > 0) forcings = interpolate_list(forcings_data, times[0]);
   List first_call;
   try {
-    first_call = model(times[0], states, parameters, forcings); 
+    first_call = model(wrap(times[0]), states, parameters, forcings); 
   } catch(std::exception &ex) {
       forward_exception_to_r(ex);
   } catch(...) { 
@@ -177,7 +177,7 @@ NumericMatrix cvode_Cpp(NumericVector times, NumericVector states,
    */
   NumericVector observed;
   int nder = 0;
-  if(first_call.size() > 1) {
+  if(first_call.size() == 2) {
     observed = first_call[1];
     nder = observed.size();
   }
@@ -261,7 +261,7 @@ NumericMatrix cvode_Cpp(NumericVector times, NumericVector states,
      NumericVector simulated_states(neq);
      for(auto j = 0; j < neq; j++) simulated_states[j] = output(i,j + 1);
      // Call the model function to retrieve total number of outputs and initial values for derived variables
-     List model_call  = model(times[0], simulated_states, parameters, forcings); 
+     List model_call  = model(wrap(times[0]), simulated_states, parameters, forcings); 
      observed  = model_call[1];
      // Derived variables already stored by the interface function
      for(auto j = 0; j < nder; j++)  output(i,j + 1 + neq) = observed[j]; 
@@ -393,7 +393,7 @@ NumericMatrix cvode_R(NumericVector times, NumericVector states,
    *
    */
   NumericVector forcings(0);
-  if(forcings_data.size() >= 1) forcings = interpolate_list(forcings_data, times[0]);
+  if(forcings_data.size() > 0) forcings = interpolate_list(forcings_data, times[0]);
   List first_call(0);
   try {
     first_call  = model(times[0], states, parameters, forcings); 
@@ -408,7 +408,7 @@ NumericMatrix cvode_R(NumericVector times, NumericVector states,
   
   NumericVector observed;
   int nder = 0;
-  if(first_call.size() > 1) {
+  if(first_call.size() == 2) {
     observed = first_call[1];
     nder = observed.size();
   }

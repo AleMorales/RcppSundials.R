@@ -9,8 +9,6 @@ using namespace Rcpp;
 //' @export
 // [[Rcpp::export]]
 List example_model(double t, NumericVector states, NumericVector parameters, NumericVector forcings) {
-   Rcout << "Before vectorized\n";
-  NumericVector derivatives = -states*parameters[0];
-  Rcout << "Before assignment derivatives\n";
+   NumericVector derivatives = -states*parameters[0];
    return List::create(derivatives);
 }

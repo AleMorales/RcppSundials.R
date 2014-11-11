@@ -4,8 +4,7 @@
 #include <Rcpp.h>
 
 // Signature of the model written in C++
-typedef Rcpp::List ode_in_Cpp(double time, Rcpp::NumericVector states, 
-                        Rcpp::NumericVector parameters, Rcpp::NumericVector forcings);
+typedef SEXP ode_in_Cpp(SEXP time, SEXP states, SEXP parameters, SEXP forcings);
 
 // Struct that contains the data to run C++ models
 struct data_Cpp {
