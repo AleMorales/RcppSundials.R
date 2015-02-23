@@ -1,9 +1,11 @@
 #ifndef __RcppSundialsDataType_h__
 
 #define __RcppSundialsDataType_h__
+#define ARMA_DONT_USE_CXX11
 #include <Rcpp.h>
 #include <vector>
 #include <RcppArmadillo.h>
+#include <array>
 
 // Signature of the model written in C++
 typedef SEXP ode_in_Cpp(SEXP time, SEXP states, SEXP parameters, SEXP forcings);

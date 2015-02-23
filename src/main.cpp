@@ -1,4 +1,4 @@
-//#define ARMA_NO_DEBUG
+#define ARMA_DONT_USE_CXX11
 #include <RcppArmadillo.h>
 #include <Rcpp.h>
 #include <cvode/cvode.h>           // CVODES functions and constants
