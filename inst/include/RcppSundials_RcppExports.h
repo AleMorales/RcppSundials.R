@@ -44,25 +44,6 @@ namespace RcppSundials {
         return Rcpp::as<NumericMatrix >(__result);
     }
 
-    inline NumericMatrix cvode_Cpp(NumericVector times, NumericVector states, NumericVector parameters, List forcings_data, List settings, SEXP model_, SEXP jacobian_) {
-        typedef SEXP(*Ptr_cvode_Cpp)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
-        static Ptr_cvode_Cpp p_cvode_Cpp = NULL;
-        if (p_cvode_Cpp == NULL) {
-            validateSignature("NumericMatrix(*cvode_Cpp)(NumericVector,NumericVector,NumericVector,List,List,SEXP,SEXP)");
-            p_cvode_Cpp = (Ptr_cvode_Cpp)R_GetCCallable("RcppSundials", "RcppSundials_cvode_Cpp");
-        }
-        RObject __result;
-        {
-            RNGScope __rngScope;
-            __result = p_cvode_Cpp(Rcpp::wrap(times), Rcpp::wrap(states), Rcpp::wrap(parameters), Rcpp::wrap(forcings_data), Rcpp::wrap(settings), Rcpp::wrap(model_), Rcpp::wrap(jacobian_));
-        }
-        if (__result.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (__result.inherits("try-error"))
-            throw Rcpp::exception(as<std::string>(__result).c_str());
-        return Rcpp::as<NumericMatrix >(__result);
-    }
-
     inline NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_, NumericVector parameters_, List forcings_data_, List settings, SEXP model_, SEXP jacobian_) {
         typedef SEXP(*Ptr_cvode_Cpp_stl)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
         static Ptr_cvode_Cpp_stl p_cvode_Cpp_stl = NULL;

@@ -7,12 +7,6 @@ cvode_R <- function(times, states, parameters, forcings_data, settings, model, j
     .Call('RcppSundials_cvode_R', PACKAGE = 'RcppSundials', times, states, parameters, forcings_data, settings, model, jacobian)
 }
 
-#' Simulates the model when it is written as a C++ function
-#' @export
-cvode_Cpp <- function(times, states, parameters, forcings_data, settings, model_, jacobian_) {
-    .Call('RcppSundials_cvode_Cpp', PACKAGE = 'RcppSundials', times, states, parameters, forcings_data, settings, model_, jacobian_)
-}
-
 #' Simulates the model when it is written as a C++ function using stl containers
 #' @export
 cvode_Cpp_stl <- function(times, states_, parameters_, forcings_data_, settings, model_, jacobian_) {

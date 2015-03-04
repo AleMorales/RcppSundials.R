@@ -41,7 +41,7 @@ struct data_Cpp_stl {
  */
  
 // Interpolate the forcings when passed as a matrix
-double interpolate(Rcpp::NumericMatrix data, double xout) {
+inline double interpolate(Rcpp::NumericMatrix data, double xout) {
   Rcpp::NumericVector x = data(Rcpp::_,0);
   Rcpp::NumericVector y = data(Rcpp::_,1);
   // Retrieve the range of x values where xout is located
@@ -63,7 +63,7 @@ double interpolate(Rcpp::NumericMatrix data, double xout) {
 }
 
 // Interpolate the list of forcings and return the values as a NumericVector
-Rcpp::NumericVector interpolate_list(Rcpp::List data, double t) {
+inline Rcpp::NumericVector interpolate_list(Rcpp::List data, double t) {
   Rcpp::NumericVector forcings(data.size());
   for(auto i = 0; i < data.size(); i++) {
     forcings[i] = interpolate(data[i], t);
@@ -78,7 +78,7 @@ Rcpp::NumericVector interpolate_list(Rcpp::List data, double t) {
  */
  
 // Interpolate the forcings when passed as an Armadillo matrix
-double interpolate(const arma::mat& data, const double& xout) {
+inline double interpolate(const arma::mat& data, const double& xout) {
   // use rule = 2 when xout is too high 
   if(xout >= data(data.n_rows - 1,0)) {
       return data(data.n_rows - 1, 1);
@@ -98,7 +98,7 @@ double interpolate(const arma::mat& data, const double& xout) {
 }
 
 // Interpolate vector of forcings and return the values as a vector<double>
-std::vector<double> interpolate_list(const std::vector<arma::mat>& data, const double& t) {
+inline std::vector<double> interpolate_list(const std::vector<arma::mat>& data, const double& t) {
   std::vector<double> forcings(data.size());
   for(auto i = 0; i < data.size(); i++) {
     forcings[i] = interpolate(data[i], t);
