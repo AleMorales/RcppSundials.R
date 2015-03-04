@@ -16,15 +16,6 @@ typedef std::array<std::vector<double>, 2> ode_in_Cpp_stl(const double& t, const
 typedef arma::mat jac_in_Cpp_stl(const double& t, const std::vector<double>& states, 
             const std::vector<double>& parameters, const std::vector<double>& forcings);
             
-// Struct that contains the data to run C++ models
-struct data_Cpp {
-  Rcpp::NumericVector parameters;
-  Rcpp::List forcings_data;
-  int neq;
-  ode_in_Cpp* model;
-  jac_in_Cpp* jacobian;
-};
-
 // Struct that contains the data to run R models
 struct data_R {
   Rcpp::NumericVector parameters;
