@@ -89,6 +89,28 @@ RcppExport SEXP RcppSundials_cvode_Cpp_stl(SEXP timesSEXP, SEXP states_SEXP, SEX
     UNPROTECT(1);
     return __result;
 }
+// ida_Cpp_stl
+NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_, NumericVector derivatives_, NumericVector parameters_, List forcings_data_, List settings, SEXP model_, SEXP jacobian_);
+RcppExport SEXP RcppSundials_ida_Cpp_stl(SEXP timesSEXP, SEXP states_SEXP, SEXP derivatives_SEXP, SEXP parameters_SEXP, SEXP forcings_data_SEXP, SEXP settingsSEXP, SEXP model_SEXP, SEXP jacobian_SEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< NumericVector >::type times(timesSEXP );
+        Rcpp::traits::input_parameter< NumericVector >::type states_(states_SEXP );
+        Rcpp::traits::input_parameter< NumericVector >::type derivatives_(derivatives_SEXP );
+        Rcpp::traits::input_parameter< NumericVector >::type parameters_(parameters_SEXP );
+        Rcpp::traits::input_parameter< List >::type forcings_data_(forcings_data_SEXP );
+        Rcpp::traits::input_parameter< List >::type settings(settingsSEXP );
+        Rcpp::traits::input_parameter< SEXP >::type model_(model_SEXP );
+        Rcpp::traits::input_parameter< SEXP >::type jacobian_(jacobian_SEXP );
+        NumericMatrix __result = ida_Cpp_stl(times, states_, derivatives_, parameters_, forcings_data_, settings, model_, jacobian_);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}
 // example_model
 List example_model(double t, NumericVector states, NumericVector parameters, NumericVector forcings);
 RcppExport SEXP RcppSundials_example_model(SEXP tSEXP, SEXP statesSEXP, SEXP parametersSEXP, SEXP forcingsSEXP) {

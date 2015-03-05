@@ -13,6 +13,12 @@ cvode_Cpp_stl <- function(times, states_, parameters_, forcings_data_, settings,
     .Call('RcppSundials_cvode_Cpp_stl', PACKAGE = 'RcppSundials', times, states_, parameters_, forcings_data_, settings, model_, jacobian_)
 }
 
+#' Simulates the model when it is written as a C++ function using stl containers
+#' @export
+ida_Cpp_stl <- function(times, states_, derivatives_, parameters_, forcings_data_, settings, model_, jacobian_) {
+    .Call('RcppSundials_ida_Cpp_stl', PACKAGE = 'RcppSundials', times, states_, derivatives_, parameters_, forcings_data_, settings, model_, jacobian_)
+}
+
 #' An example of model (unit test)
 #' @export
 example_model <- function(t, states, parameters, forcings) {
