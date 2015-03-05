@@ -7,12 +7,11 @@
 #include <RcppArmadillo.h>
 #include <array>
 
-// Signature of the model written in C++
-typedef SEXP ode_in_Cpp(SEXP time, SEXP states, SEXP parameters, SEXP forcings);
-typedef SEXP jac_in_Cpp(SEXP time, SEXP states, SEXP parameters, SEXP forcings);
-
 typedef std::array<std::vector<double>, 2> ode_in_Cpp_stl(const double& t, const std::vector<double>& states, 
             const std::vector<double>& parameters, const std::vector<double>& forcings);
+typedef std::array<std::vector<double>, 2> dae_in_Cpp_stl(const double& t, const std::vector<double>& states, 
+            const std::vector<double>& derivatives, const std::vector<double>& parameters, 
+            const std::vector<double>& forcings);
 typedef arma::mat jac_in_Cpp_stl(const double& t, const std::vector<double>& states, 
             const std::vector<double>& parameters, const std::vector<double>& forcings);
             
@@ -33,6 +32,16 @@ struct data_Cpp_stl {
   ode_in_Cpp_stl* model;
   jac_in_Cpp_stl* jacobian;
 };
+
+// Struct that contains the data to run C++ (with stl) DAE models
+struct data_ida_Cpp_stl {
+  std::vector<double> parameters;
+  const std::vector<arma::mat> forcings_data;
+  const int neq;
+  dae_in_Cpp_stl* model;
+  jac_in_Cpp_stl* jacobian;
+};
+
 
 /*
  *
