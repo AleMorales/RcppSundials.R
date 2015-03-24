@@ -255,6 +255,8 @@ NumericMatrix cvode_R(NumericVector times, NumericVector states,
   for(auto it = extract_states.begin(); it != extract_states.end(); it++) {
     if(*it > NV_LENGTH_S(y)) {
       Rcout << "The index " << *it << " exceeds the number of state variables of the model" << '\n';
+      if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+      if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);}        
       ::Rf_error("Simulation exited because of error in extracting state variables");
     }
     output(0,*it) = NV_Ith_S(y,*it - 1);
@@ -265,6 +267,8 @@ NumericMatrix cvode_R(NumericVector times, NumericVector states,
     for(auto it = extract_observed.begin(); it != extract_observed.end(); it++) {
       if(*it > observed.size()) {
         Rcout << "The index " << *it << " exceeds the number of observed variables returned by the model" << '\n';
+        if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+        if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);}  
         ::Rf_error("Simulation exited because of error in extracting observed variables");
       }
       output(0,*it + extract_states.size()) = observed[*it - 1];
@@ -337,10 +341,6 @@ NumericMatrix cvode_R(NumericVector times, NumericVector states,
     output(i,0) = times[i];
     //for(auto h = 0; h < neq; h++) output(i,h + 1) = NV_Ith_S(y,h);
     for(auto it = extract_states.begin(); it != extract_states.end(); it++) {
-      if(*it > NV_LENGTH_S(y)) {
-        Rcout << "The index " << *it << " exceeds the number of state variables of the model" << '\n';
-        ::Rf_error("Simulation exited because of error in extracting state variables");
-      }
       output(i,*it) = NV_Ith_S(y,*it - 1);
     }
   }
@@ -360,10 +360,6 @@ NumericMatrix cvode_R(NumericVector times, NumericVector states,
       // Derived variables already stored by the interface function
       //for(auto j = 0; j < nder; j++)  output(i,j + 1 + neq) = observed[j]; 
       for(auto it = extract_observed.begin(); it != extract_observed.end(); it++) {
-        if(*it > observed.size()) {
-          Rcout << "The index " << *it << " exceeds the number of observed variables returned by the model" << '\n';
-          ::Rf_error("Simulation exited because of error in extracting observed variables");
-        }
         output(i,*it + extract_states.size()) = observed[*it - 1];
       }
     } 
