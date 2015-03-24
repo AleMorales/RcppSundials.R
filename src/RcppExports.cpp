@@ -167,6 +167,37 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// ida_calc_res
+List ida_calc_res(SEXP model_, NumericVector t, NumericVector states, NumericVector derivatives, NumericVector parameters, List forcings_data_);
+RcppExport SEXP RcppSundials_ida_calc_res(SEXP model_SEXP, SEXP tSEXP, SEXP statesSEXP, SEXP derivativesSEXP, SEXP parametersSEXP, SEXP forcings_data_SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type model_(model_SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type t(tSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type states(statesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type derivatives(derivativesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type parameters(parametersSEXP);
+    Rcpp::traits::input_parameter< List >::type forcings_data_(forcings_data_SEXP);
+    __result = Rcpp::wrap(ida_calc_res(model_, t, states, derivatives, parameters, forcings_data_));
+    return __result;
+END_RCPP
+}
+// ida_calc_jac
+NumericMatrix ida_calc_jac(SEXP jacobian_, NumericVector t, NumericVector states, NumericVector parameters, List forcings_data_);
+RcppExport SEXP RcppSundials_ida_calc_jac(SEXP jacobian_SEXP, SEXP tSEXP, SEXP statesSEXP, SEXP parametersSEXP, SEXP forcings_data_SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< SEXP >::type jacobian_(jacobian_SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type t(tSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type states(statesSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type parameters(parametersSEXP);
+    Rcpp::traits::input_parameter< List >::type forcings_data_(forcings_data_SEXP);
+    __result = Rcpp::wrap(ida_calc_jac(jacobian_, t, states, parameters, forcings_data_));
+    return __result;
+END_RCPP
+}
 // example_model
 List example_model(double t, NumericVector states, NumericVector parameters, NumericVector forcings);
 RcppExport SEXP RcppSundials_example_model(SEXP tSEXP, SEXP statesSEXP, SEXP parametersSEXP, SEXP forcingsSEXP) {
