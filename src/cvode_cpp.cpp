@@ -376,3 +376,48 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
   
   return wrap(output);
 }
+
+//' Allows calling the model that calculates the time derivatives
+//' @export
+// [[Rcpp::export]]
+List cvode_calc_derivs(SEXP model_, NumericVector t, NumericVector states, 
+                          NumericVector parameters, List forcings_data_) {
+   // Wrap the pointer to the model function with the correct signature                        
+  ode_in_Cpp_stl* model =  (ode_in_Cpp_stl *) R_ExternalPtrAddr(model_); 
+  // Interpolate the forcings
+  vector<mat> forcings_data(forcings_data_.size());
+  if(forcings_data_.size() > 0) 
+    for(int i = 0; i < forcings_data_.size(); i++)
+      forcings_data[i] = as<mat>(forcings_data_[i]);
+  vector<double> forcings(forcings_data.size());
+  if(forcings_data.size() > 0) forcings = interpolate_list(forcings_data, t[0]);
+  // Call the model
+  array<vector<double>, 2> output = model(t[0], as<vector<double>>(states),
+                                          as<vector<double>>(parameters),
+                                          forcings);
+  // return the output as a list
+  return List::create(_["Derivatives"] = wrap(output[0]),
+                      _["Observed"] = wrap(output[1]));
+}
+
+//' Allows calling the function to calculate the Jacobian matrix of the model
+//' @export
+// [[Rcpp::export]]
+NumericMatrix cvode_calc_jac(SEXP jacobian_, NumericVector t, NumericVector states, 
+                          NumericVector parameters, List forcings_data_) {
+   // Wrap the pointer to the model function with the correct signature                        
+  jac_in_Cpp_stl* jacobian = (jac_in_Cpp_stl *) R_ExternalPtrAddr(jacobian_);
+  // Interpolate the forcings
+  vector<mat> forcings_data(forcings_data_.size());
+  if(forcings_data_.size() > 0) 
+    for(int i = 0; i < forcings_data_.size(); i++)
+      forcings_data[i] = as<mat>(forcings_data_[i]);
+  vector<double> forcings(forcings_data.size());
+  if(forcings_data.size() > 0) forcings = interpolate_list(forcings_data, t[0]);
+  // Call the model
+  arma::mat output = jacobian(t[0], as<vector<double>>(states),
+                                          as<vector<double>>(parameters),
+                                          forcings);
+  // return the output as a list
+  return wrap(output);
+} 
