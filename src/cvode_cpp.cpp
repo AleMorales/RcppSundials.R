@@ -230,6 +230,13 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
     ::Rf_error("c++ exception (unknown reason)"); 
   }
   
+  // Check length of time derivatives against the information passed through settings
+  if(first_call[0].size() != neq) {
+    if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+    if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);}     
+    ::Rf_error("Length of time derivatives returned by the model does not coincide with the number of state variables.");     
+  }
+  
   /*
    * 
    Fill up the output matrix with the values for the initial time
