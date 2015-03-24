@@ -260,15 +260,15 @@ NumericMatrix cvode_R(NumericVector times, NumericVector states,
   for(unsigned i = 1; i < times.size(); i++) {
     try {
       flag = CVode(cvode_mem, times[i], y, &t, CV_NORMAL);
-      if(as<int>(settings["positive"]) == 1) {
-        for(auto h = 0; h < neq; h++) {
-         if(NV_Ith_S(y,h) < 0.0) {
-           Rcout << "The state variable at positon " << h << " became negative: " << NV_Ith_S(y,h) << '\n';
+      for(auto h = 0; h < neq; h++) {
+       if(as<bool>(settings["positive"])) {
+         if(NV_Ith_S(y,h) < as<double>(settings["minimum"])) {
+           Rcout << "The state variable at positon " << h << " became smaller than minimum: " << NV_Ith_S(y,h) << '\n';
            if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
            if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);}      
-           ::Rf_error("At least one of the states became negative"); 
+           ::Rf_error("At least one of the states became smaller than minimum"); 
          }
-        }
+       }
       }
       if(flag < 0.0) {
         switch(flag) {

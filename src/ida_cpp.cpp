@@ -233,16 +233,16 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   for(unsigned i = 1; i < times.size(); i++) {
     try {
       flag = IDASolve(ida_mem, times[i], &t, y, yp, IDA_NORMAL);
-      if(as<int>(settings["positive"]) == 1) {
-        for(auto h = 0; h < neq; h++) {
-         if(NV_Ith_S(y,h) < 0.0) {
-           Rcout << "The state variable at positon " << h << " became negative: " << NV_Ith_S(y,h) << '\n';
-           if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
-           if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);}  
-           ::Rf_error("At least one of the states became negative"); 
-         }
-        }
-      }     
+      for(auto h = 0; h < neq; h++) {
+        if(as<bool>(settings["positive"])) {
+           if(NV_Ith_S(y,h) < as<double>(settings["minimum"])) {
+             Rcout << "The state variable at positon " << h << " became smaller than minimum: " << NV_Ith_S(y,h) << '\n';
+             if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+             if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);}  
+             ::Rf_error("At least one of the states became smaller than minimum"); 
+           }
+        } 
+      }
       if(flag < 0.0) {
         switch(flag) {
           case -1:
