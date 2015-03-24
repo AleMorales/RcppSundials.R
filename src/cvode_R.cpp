@@ -250,12 +250,26 @@ NumericMatrix cvode_R(NumericVector times, NumericVector states,
   
   NumericMatrix output(times.size(), extract_states.size() + extract_observed.size() + 1);
   output(0,0) = times[0];
-  for(auto i = 0; i < neq; i++) 
-      output(0,i+1) = states[i];
-  if(nder  > 0) 
-      for(auto i = 0; i < nder; i++)  
-          output(0,i + 1 + neq) = observed[i];
-  
+  //for(auto i = 0; i < neq; i++) 
+  //    output(0,i+1) = states[i];
+  for(auto it = extract_states.begin(); it != extract_states.end(); it++) {
+    if(*it > NV_LENGTH_S(y)) {
+      Rcout << "The index " << *it << " exceeds the number of state variables of the model" << '\n';
+      ::Rf_error("Simulation exited because of error in extracting state variables");
+    }
+    output(0,*it) = NV_Ith_S(y,*it - 1);
+  }  
+  if(extract_observed.size() > 0) {
+    //for(auto i = 0; i < nder; i++)  
+    //    output(0,i + 1 + neq) = observed[i];
+    for(auto it = extract_observed.begin(); it != extract_observed.end(); it++) {
+      if(*it > observed.size()) {
+        Rcout << "The index " << *it << " exceeds the number of observed variables returned by the model" << '\n';
+        ::Rf_error("Simulation exited because of error in extracting observed variables");
+      }
+      output(0,*it + extract_states.size()) = observed[*it - 1];
+    }
+ }
   /*
    * 
    Main time loop. Each timestep call cvode. Handle exceptions and fill up output
