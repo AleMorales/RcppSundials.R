@@ -216,13 +216,32 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
     observed = temp;
     nder = observed.size();
   }
-  mat output(times.size(), neq + nder + 1);
+  
+  vector<int> extract_states = as<vector<int>>(settings["which_states"]);
+  vector<int> extract_observed = as<vector<int>>(settings["which_observed"]);
+  
+  mat output(times.size(), extract_states.size() + extract_observed.size() + 1);
   output(0,0) = times[0];
-  for(auto i = 0; i < neq; i++) 
-      output(0,i+1) = states[i];
-  if(nder  > 0) 
-      for(auto i = 0; i < nder; i++)  
-          output(0,i + 1 + neq) = observed[i];
+  //for(auto i = 0; i < neq; i++) {
+  //    output(0,i+1) = states[i];
+  for(auto it = extract_states.begin(); it != extract_states.end(); it++) {
+    if(*it > NV_LENGTH_S(y)) {
+      Rcout << "The index " << *it << " exceeds the number of state variables of the model" << '\n';
+      ::Rf_error("Simulation exited because of error in extracting state variables");
+    }
+    output[0,*it] = NV_Ith_S(y,*it - 1);
+  }     
+  if(extract_observed.size()  > 0) {
+      //for(auto i = 0; i < nder; i++)  
+      //    output(0,i + 1 + neq) = observed[i];
+      for(auto it = extract_observed.begin(); it != extract_observed.end(); it++) {
+        if(*it > observed.size()) {
+          Rcout << "The index " << *it << " exceeds the number of observed variables returned by the model" << '\n';
+          ::Rf_error("Simulation exited because of error in extracting observed variables");
+        }
+        output[0,*it + extract_states.size()] = observed[*it - 1];
+      }     
+  }
   
   /*
    * 
@@ -287,11 +306,18 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
 
      // Write to the output matrix the new values of state variables and time
     output(i,0) = times[i];
-    for(auto h = 0; h < neq; h++) output(i,h + 1) = NV_Ith_S(y,h);
+    //for(auto h = 0; h < neq; h++) output(i,h + 1) = NV_Ith_S(y,h);
+    for(auto it = extract_states.begin(); it != extract_states.end(); it++) {
+      if(*it > NV_LENGTH_S(y)) {
+        Rcout << "The index " << *it << " exceeds the number of state variables of the model" << '\n';
+        ::Rf_error("Simulation exited because of error in extracting state variables");
+      }
+      output[i,*it] = NV_Ith_S(y,*it - 1);
+    }    
   }
   
   // If we have observed variables we call the model function again
-  if(nder > 0 && flag >= 0.0) {
+  if(extract_observed.size() > 0 && flag >= 0.0) {
     for(unsigned i = 1; i < times.size(); i++) {
       // Get forcings values at time 0.
       if(forcings_data.size() > 0) forcings = interpolate_list(forcings_data, times[i]);
@@ -301,7 +327,14 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
       std::array<vector<double>, 2> model_call  = model(times[i], states, derivatives, parameters, forcings); 
       observed =  model_call[1];
       // Derived variables already stored by the interface function
-      for(auto j = 0; j < nder; j++)  output(i,j + 1 + neq) = observed[j]; 
+      //for(auto j = 0; j < nder; j++)  output(i,j + 1 + neq) = observed[j]; 
+      for(auto it = extract_observed.begin(); it != extract_observed.end(); it++) {
+        if(*it > observed.size()) {
+          Rcout << "The index " << *it << " exceeds the number of observed variables returned by the model" << '\n';
+          ::Rf_error("Simulation exited because of error in extracting observed variables");
+        }
+        output[i,*it + extract_states.size()] = observed[*it - 1];
+      }       
     } 
   }
               
