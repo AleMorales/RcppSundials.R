@@ -81,69 +81,107 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   void *ida_mem = IDACreate();
   // Shut up Sundials (errors not printed to the screen)
   int flag = IDASetErrFile(ida_mem, NULL);
-  if(flag < 0.0) stop("Error in the IDASetErrFile function");  
+  if(flag < 0.0) {
+    if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+    if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
+    stop("Error in the IDASetErrFile function");  
+  }
   
   // Initialize the Sundials solver. Here we pass initial N_Vector, the interface function and the initial time
   flag = IDAInit(ida_mem, ida_to_Cpp_stl, times[0], y, yp);
-  if(flag < 0.0) stop("Error in the IDAInit function"); 
-
+  if(flag < 0.0) {
+    if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+    if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
+    stop("Error in the IDAInit function"); 
+  }
+  
   // Tell Sundials the tolerance settings for error control
   flag = IDASStolerances(ida_mem, settings["rtol"], settings["atol"]);
-  if(flag < 0.0) stop("Error in the IDASStolerances function");
+  if(flag < 0.0) {
+    if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+    if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);}     
+    stop("Error in the IDASStolerances function");
+  }
 
   // Tell Sundials the number of state variables, so that I can allocate memory for the Jacobian
   flag = IDADense(ida_mem, neq);
-  if(flag < 0.0) stop("Error in the IDADense function");
+  if(flag < 0.0) {
+    if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+    if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
+    stop("Error in the IDADense function");
+  }
     
   // Give Sundials a pointer to the struct where all the user data is stored. It will be passed (untouched) to the interface as void pointer
   flag = IDASetUserData(ida_mem, &data_model);
-  if(flag < 0.0) stop("Error in the IDASetUserData function");
+  if(flag < 0.0) {
+    if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+    if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
+    stop("Error in the IDASetUserData function");
+  }
 
   // Correct initial values
   flag = IDACalcIC(ida_mem, IDA_Y_INIT, times[1]);
-  if(flag < 0.0) stop("Error in the IDACalcIC function");  
-  
-  //flag = IDASetSuppressAlg(ida_mem, true);
-  //if(flag < 0.0) stop("Error in the IDASetSuppressAlg function"); 
-  
-  // If we want to provide our own Jacobian, set the interface function to Sundials
-  /*if(as<int>(settings["jacobian"]) == 1) {
-    flag = IDADlsSetDenseJacFn(ida_mem, cvode_to_Cpp_stl_jac);
-    if(flag < 0.0) stop("Error in the IDADlsSetDenseJacFn function");
-  }*/
+  if(flag < 0.0) {
+    if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+    if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
+    stop("Error in the IDACalcIC function");  
+  }
 
   // Set maximum number of steps
   flag = IDASetMaxNumSteps(ida_mem, settings["maxsteps"]);
-  if(flag < 0.0) stop("Error in the IDASetMaxNumSteps function");
+  if(flag < 0.0) {
+    if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+    if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
+    stop("Error in the IDASetMaxNumSteps function");
+  }
   
   // Set maximum order of the integration
   flag = IDASetMaxOrd(ida_mem, settings["maxord"]); 
-  if(flag < 0.0) stop("Error in the IDASetMaxOrd function");
+  if(flag < 0.0) {
+    if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+    if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
+    stop("Error in the IDASetMaxOrd function");
+  }
   
   // Set the initial step size
   flag = IDASetInitStep(ida_mem, settings["hini"]);  
-  if(flag < 0.0) stop("Error in the IDASetInitStep function");
-  
-  // Set the minimum step size
-  /*flag = IDASetMinStep(ida_mem, settings["hmin"]);  
-  if(flag < 0.0) stop("Error in the CVodeSetMinStep function");
-  */
+  if(flag < 0.0) {
+    if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+    if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
+    stop("Error in the IDASetInitStep function");
+  }
   
   // Set the maximum step size
   flag = IDASetMaxStep(ida_mem, settings["hmax"]);  
-  if(flag < 0.0) stop("Error in the IDASetMaxStep function");  
+  if(flag < 0.0) {
+    if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+    if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
+    stop("Error in the IDASetMaxStep function");  
+  }
   
   // Set the maximum number of error test fails
   flag = IDASetMaxErrTestFails(ida_mem, settings["maxerr"]);  
-  if(flag < 0.0) stop("Error in the IDASetMaxErrTestFails function");  
+  if(flag < 0.0) {
+    if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+    if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
+    stop("Error in the IDASetMaxErrTestFails function");  
+  }
   
   // Set the maximum number of nonlinear iterations per step
   flag = IDASetMaxNonlinIters(ida_mem, settings["maxnonlin"]);  
-  if(flag < 0.0) stop("Error in the IDASetMaxNonlinIters function");  
+  if(flag < 0.0) {
+    if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+    if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
+    stop("Error in the IDASetMaxNonlinIters function");  
+  }
   
   // Set the maximum number of convergence failures
   flag = IDASetMaxConvFails(ida_mem, settings["maxconvfail"]);   
-  if(flag < 0.0) stop("Error in the IDASetMaxConvFails function");
+  if(flag < 0.0) {
+    if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+    if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
+    stop("Error in the IDASetMaxConvFails function");
+  }
   
   /*
    * 
@@ -156,8 +194,12 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   try {
     first_call = model(times[0], states, derivatives, parameters, forcings); 
   } catch(std::exception &ex) {
+      if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+      if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
       forward_exception_to_r(ex);
   } catch(...) { 
+    if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+    if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
     ::Rf_error("c++ exception (unknown reason)"); 
   }
   
@@ -224,8 +266,12 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
         }
       }
     } catch(std::exception &ex) {
+      if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+      if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
       forward_exception_to_r(ex);
     } catch(...) { 
+      if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+      if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
       ::Rf_error("c++ exception (unknown reason)"); 
     }
 
@@ -250,18 +296,8 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   }
               
   // De-allocate the N_Vector and the ida_mem structures
-  if(y == nullptr) {
-    free(y);
-    free(yp);
-  } else {
-    N_VDestroy_Serial(y);
-    N_VDestroy_Serial(yp);
-  }
-  if(ida_mem == nullptr) {
-    free(ida_mem);
-  } else {
-    IDAFree(&ida_mem);
-  }  
+  if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+  if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
   
   return wrap(output);
 }

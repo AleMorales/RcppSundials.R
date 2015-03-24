@@ -18,3 +18,4 @@
 
 *.so
 *o
+.Rapp.history
