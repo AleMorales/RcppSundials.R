@@ -84,7 +84,7 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   if(flag < 0.0) {
     if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
     if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
-    stop("Error in the IDASetErrFile function");  
+    ::Rf_error("Error in the IDASetErrFile function");  
   }
   
   // Initialize the Sundials solver. Here we pass initial N_Vector, the interface function and the initial time
@@ -92,7 +92,7 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   if(flag < 0.0) {
     if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
     if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
-    stop("Error in the IDAInit function"); 
+    ::Rf_error("Error in the IDAInit function"); 
   }
   
   // Tell Sundials the tolerance settings for error control
@@ -100,7 +100,7 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   if(flag < 0.0) {
     if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
     if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);}     
-    stop("Error in the IDASStolerances function");
+    ::Rf_error("Error in the IDASStolerances function");
   }
 
   // Tell Sundials the number of state variables, so that I can allocate memory for the Jacobian
@@ -108,7 +108,7 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   if(flag < 0.0) {
     if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
     if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
-    stop("Error in the IDADense function");
+    ::Rf_error("Error in the IDADense function");
   }
     
   // Give Sundials a pointer to the struct where all the user data is stored. It will be passed (untouched) to the interface as void pointer
@@ -116,7 +116,7 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   if(flag < 0.0) {
     if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
     if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
-    stop("Error in the IDASetUserData function");
+    ::Rf_error("Error in the IDASetUserData function");
   }
 
   // Correct initial values
@@ -124,7 +124,7 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   if(flag < 0.0) {
     if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
     if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
-    stop("Error in the IDACalcIC function");  
+    ::Rf_error("Error in the IDACalcIC function");  
   }
 
   // Set maximum number of steps
@@ -132,7 +132,7 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   if(flag < 0.0) {
     if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
     if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
-    stop("Error in the IDASetMaxNumSteps function");
+    ::Rf_error("Error in the IDASetMaxNumSteps function");
   }
   
   // Set maximum order of the integration
@@ -140,7 +140,7 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   if(flag < 0.0) {
     if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
     if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
-    stop("Error in the IDASetMaxOrd function");
+    ::Rf_error("Error in the IDASetMaxOrd function");
   }
   
   // Set the initial step size
@@ -148,7 +148,7 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   if(flag < 0.0) {
     if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
     if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
-    stop("Error in the IDASetInitStep function");
+    ::Rf_error("Error in the IDASetInitStep function");
   }
   
   // Set the maximum step size
@@ -156,7 +156,7 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   if(flag < 0.0) {
     if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
     if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
-    stop("Error in the IDASetMaxStep function");  
+    ::Rf_error("Error in the IDASetMaxStep function");  
   }
   
   // Set the maximum number of error test fails
@@ -164,7 +164,7 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   if(flag < 0.0) {
     if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
     if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
-    stop("Error in the IDASetMaxErrTestFails function");  
+    ::Rf_error("Error in the IDASetMaxErrTestFails function");  
   }
   
   // Set the maximum number of nonlinear iterations per step
@@ -172,7 +172,7 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   if(flag < 0.0) {
     if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
     if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
-    stop("Error in the IDASetMaxNonlinIters function");  
+    ::Rf_error("Error in the IDASetMaxNonlinIters function");  
   }
   
   // Set the maximum number of convergence failures
@@ -180,7 +180,7 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   if(flag < 0.0) {
     if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
     if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
-    stop("Error in the IDASetMaxConvFails function");
+    ::Rf_error("Error in the IDASetMaxConvFails function");
   }
   
   /*
@@ -233,6 +233,16 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   for(unsigned i = 1; i < times.size(); i++) {
     try {
       flag = IDASolve(ida_mem, times[i], &t, y, yp, IDA_NORMAL);
+      if(as<int>(settings["positive"]) == 1) {
+        for(auto h = 0; h < neq; h++) {
+         if(NV_Ith_S(y,h) < 0.0) {
+           Rcout << "The state variable at positon " << h << " became negative: " << NV_Ith_S(y,h) << '\n';
+           if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+           if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);}  
+           ::Rf_error("At least one of the states became negative"); 
+         }
+        }
+      }     
       if(flag < 0.0) {
         switch(flag) {
           case -1:
