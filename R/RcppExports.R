@@ -13,6 +13,18 @@ cvode_Cpp_stl <- function(times, states_, parameters_, forcings_data_, settings,
     .Call('RcppSundials_cvode_Cpp_stl', PACKAGE = 'RcppSundials', times, states_, parameters_, forcings_data_, settings, model_, jacobian_)
 }
 
+#' Allows calling the model that calculates the time derivatives
+#' @export
+cvode_calc_derivs <- function(model_, t, states, parameters, forcings_data_) {
+    .Call('RcppSundials_cvode_calc_derivs', PACKAGE = 'RcppSundials', model_, t, states, parameters, forcings_data_)
+}
+
+#' Allows calling the function to calculate the Jacobian matrix of the model
+#' @export
+cvode_calc_jac <- function(jacobian_, t, states, parameters, forcings_data_) {
+    .Call('RcppSundials_cvode_calc_jac', PACKAGE = 'RcppSundials', jacobian_, t, states, parameters, forcings_data_)
+}
+
 #' Simulates the model when it is written as a C++ function using stl containers
 #' @export
 ida_Cpp_stl <- function(times, states_, derivatives_, parameters_, forcings_data_, settings, model_, jacobian_) {
