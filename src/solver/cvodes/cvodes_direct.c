@@ -28,8 +28,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "cvodes_impl.h"
-#include "cvodes_direct_impl.h"
+#include <cvodes/cvodes_impl.h>
+#include <cvodes/cvodes_direct_impl.h>
 #include <sundials/sundials_math.h>
 
 /* 

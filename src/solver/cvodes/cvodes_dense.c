@@ -23,8 +23,8 @@
 #include <stdlib.h>
 
 #include <cvodes/cvodes_dense.h>
-#include "cvodes_direct_impl.h"
-#include "cvodes_impl.h"
+#include <cvodes/cvodes_direct_impl.h>
+#include <cvodes/cvodes_impl.h>
 
 #include <sundials/sundials_math.h>
 
