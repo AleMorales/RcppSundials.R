@@ -18,7 +18,7 @@ SUNDIALSOBJECTS=\
 ./solver/sundials/sundials_nvector.o \
 ./solver/nvec_ser/nvector_serial.o
 
-WRAPOBJECTS= cvode_cpp.o cvode_R.o ida_cpp.o test.o
+WRAPOBJECTS= cvode_cpp.o ida_cpp.o test.o
 
 PKGOBJECTS= RcppExports.o
 

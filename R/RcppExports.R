@@ -19,12 +19,6 @@ cvode_calc_jac <- function(jacobian_, t, states, parameters, forcings_data_) {
     .Call('RcppSundials_cvode_calc_jac', PACKAGE = 'RcppSundials', jacobian_, t, states, parameters, forcings_data_)
 }
 
-#' Simulates the model when it is written as a R function
-#' @export
-cvode_R <- function(times, states, parameters, forcings_data, settings, model, jacobian) {
-    .Call('RcppSundials_cvode_R', PACKAGE = 'RcppSundials', times, states, parameters, forcings_data, settings, model, jacobian)
-}
-
 #' Simulates the model when it is written as a C++ function using stl containers
 #' @export
 ida_Cpp_stl <- function(times, states_, derivatives_, parameters_, forcings_data_, settings, model_, jacobian_) {

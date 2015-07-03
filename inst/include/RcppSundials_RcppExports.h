@@ -82,25 +82,6 @@ namespace RcppSundials {
         return Rcpp::as<NumericMatrix >(__result);
     }
 
-    inline NumericMatrix cvode_R(NumericVector times, NumericVector states, NumericVector parameters, List forcings_data, List settings, Function model, Function jacobian) {
-        typedef SEXP(*Ptr_cvode_R)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
-        static Ptr_cvode_R p_cvode_R = NULL;
-        if (p_cvode_R == NULL) {
-            validateSignature("NumericMatrix(*cvode_R)(NumericVector,NumericVector,NumericVector,List,List,Function,Function)");
-            p_cvode_R = (Ptr_cvode_R)R_GetCCallable("RcppSundials", "RcppSundials_cvode_R");
-        }
-        RObject __result;
-        {
-            RNGScope __rngScope;
-            __result = p_cvode_R(Rcpp::wrap(times), Rcpp::wrap(states), Rcpp::wrap(parameters), Rcpp::wrap(forcings_data), Rcpp::wrap(settings), Rcpp::wrap(model), Rcpp::wrap(jacobian));
-        }
-        if (__result.inherits("interrupted-error"))
-            throw Rcpp::internal::InterruptedException();
-        if (__result.inherits("try-error"))
-            throw Rcpp::exception(as<std::string>(__result).c_str());
-        return Rcpp::as<NumericMatrix >(__result);
-    }
-
 }
 
 #endif // __RcppSundials_RcppExports_h__
