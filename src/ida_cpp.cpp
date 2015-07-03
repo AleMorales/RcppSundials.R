@@ -228,7 +228,7 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
   vector<int> extract_observed = as<vector<int>>(settings["which_observed"]);
   
   mat output(times.size(), extract_states.size() + extract_observed.size() + 1);
-  output(0,0) = times[0];
+  output.at(0,0) = times[0];
   //for(auto i = 0; i < neq; i++) {
   //    output(0,i+1) = states[i];
   for(auto it = extract_states.begin(); it != extract_states.end(); it++) {
@@ -238,7 +238,7 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
       if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
       ::Rf_error("Simulation exited because of error in extracting state variables");
     }
-    output[0,*it] = NV_Ith_S(y,*it - 1);
+    output.at(0,*it) = NV_Ith_S(y,*it - 1);
   }     
   if(extract_observed.size()  > 0) {
       //for(auto i = 0; i < nder; i++)  
@@ -250,7 +250,7 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
           if(ida_mem == nullptr) {free(ida_mem);} else {IDAFree(&ida_mem);} 
           ::Rf_error("Simulation exited because of error in extracting observed variables");
         }
-        output[0,*it + extract_states.size()] = observed[*it - 1];
+        output.at(0,*it + extract_states.size()) = observed[*it - 1];
       }     
   }
   
@@ -316,10 +316,10 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
     }
 
      // Write to the output matrix the new values of state variables and time
-    output(i,0) = times[i];
+    output.at(i,0) = times[i];
     //for(auto h = 0; h < neq; h++) output(i,h + 1) = NV_Ith_S(y,h);
     for(auto it = extract_states.begin(); it != extract_states.end(); it++) {
-      output[i,*it] = NV_Ith_S(y,*it - 1);
+      output.at(i,*it) = NV_Ith_S(y,*it - 1);
     }    
   }
   
@@ -336,7 +336,7 @@ NumericMatrix ida_Cpp_stl(NumericVector times, NumericVector states_,
       // Derived variables already stored by the interface function
       //for(auto j = 0; j < nder; j++)  output(i,j + 1 + neq) = observed[j]; 
       for(auto it = extract_observed.begin(); it != extract_observed.end(); it++) {
-        output[i,*it + extract_states.size()] = observed[*it - 1];
+        output.at(i,*it + extract_states.size()) = observed[*it - 1];
       }       
     } 
   }
