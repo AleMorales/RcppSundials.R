@@ -121,7 +121,18 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
     ::Rf_error("Error in the CVodeInit function"); 
   }
   // Tell Sundials the tolerance settings for error control
-  flag = CVodeSStolerances(cvode_mem, settings["rtol"], settings["atol"]);
+  Rcpp::NumericVector abstol = settings["atol"]; 
+  if(abstol.size() > 1) {
+    N_Vector Nabstol = nullptr;
+    Nabstol = N_VNew_Serial(neq);
+    for(int i = 0; i < neq; i++) {
+      NV_Ith_S(Nabstol,i) = abstol[i];
+    }
+    flag = CVodeSVtolerances(cvode_mem, settings["rtol"], Nabstol);
+  } else {
+    flag = CVodeSStolerances(cvode_mem, settings["rtol"], settings["atol"]);    
+  }
+
   if(flag < 0.0) {
     if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
     if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);} 
