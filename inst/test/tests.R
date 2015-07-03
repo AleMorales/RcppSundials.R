@@ -6,17 +6,18 @@ stl_example_model = getNativeSymbolInfo(name = "example_model_stl",
 stl_example_jacobian = getNativeSymbolInfo(name = "example_jacobian_stl",
                                              PACKAGE = "RcppSundials")$address
 
-simulationstl = cvode_Cpp_stl(times = 1:5, 
-                     states = rep(1.0,5), 
-                     parameters = 0.1, 
-                     forcings_data =list(cbind(1:3600,1:3600)),
+simulationstl = wrap_cvodes(times = 1:5, 
+                     states_ = rep(1.0,5), 
+                     parameters_ = 0.1, 
+                     forcings_data_ =list(cbind(1:3600,1:3600)),
                      settings = list(rtol = 1e-6,
                       atol = rep(1e-6,5), maxsteps = 1e3, maxord = 5, hini = 0,
                       hmin = 0, hmax = 100, maxerr = 5, maxnonlin = 10,
                       maxconvfail = 10, method = "bdf", jacobian = 0,
                       minimum = -1e-4, positive = 1,
-                      which_states = 1, which_observed = integer()), 
-                      model = stl_example_model, jacobian = stl_example_jacobian) 
+                      which_states = 1:5, which_observed = 1,
+                      stability = T), 
+                      model_ = stl_example_model, jacobian_ = stl_example_jacobian) 
 
 cvode_calc_derivs(stl_example_model, t = 0,  states = rep(1.0,5), parameters = 0.1, 
             forcings_data =list(cbind(1:3600,1:3600)))

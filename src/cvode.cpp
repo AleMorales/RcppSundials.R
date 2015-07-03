@@ -64,10 +64,14 @@ int cvode_to_Cpp_stl_jac(long int N, double t, N_Vector y, N_Vector fy, DlsMat J
   return 0;
 }
 
-//' Simulates the model when it is written as a C++ function using stl containers
+//' Returns the solution to the IVP problem at specified timepoints. 
+//' Object returned is a matrix where nrow = number timepoints &
+//' ncol = no. states + no. observed + [(no. states)x(no. parameters)]
+//' the third term above is only returned when sensitivity equations are being
+//' calculated
 //' @export
 // [[Rcpp::export]]
-NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_, 
+NumericMatrix wrap_cvodes(NumericVector times, NumericVector states_, 
                         NumericVector parameters_, List forcings_data_, 
                         List settings, SEXP model_, SEXP jacobian_) {
   // Wrap the pointer to the model function with the correct signature                        
@@ -106,13 +110,15 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
     if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);}     
     ::Rf_error("Please choose bdf or adams as method");
   }
-  // Shut up Sundials (errors not printed to the screen)
+  
+  // Shut up Sundials (errors should not be printed to the screen)
   int flag = CVodeSetErrFile(cvode_mem, NULL);
   if(flag < 0.0) {
    if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
    if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);}       
    ::Rf_error("Error in the CVodeSetErrFile function");  
   }
+  
   // Initialize the Sundials solver. Here we pass initial N_Vector, the interface function and the initial time
   flag = CVodeInit(cvode_mem, cvode_to_Cpp_stl, times[0], y);
   if(flag < 0.0) {
@@ -120,6 +126,7 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
     if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);}     
     ::Rf_error("Error in the CVodeInit function"); 
   }
+  
   // Tell Sundials the tolerance settings for error control
   Rcpp::NumericVector abstol = settings["atol"]; 
   if(abstol.size() > 1) {
@@ -138,7 +145,8 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
     if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);} 
     ::Rf_error("Error in the CVodeSStolerances function");
   }
-  // Tell Sundials the number of state variables, so that I can allocate memory for the Jacobian
+  
+  // Tell Sundials the number of state variables, so that I can allocate memory for the linear solver
   flag = CVDense(cvode_mem, neq);
   if(flag < 0.0) {
     if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
@@ -153,6 +161,7 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
     if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);} 
     ::Rf_error("Error in the CVodeSetUserData function");
   }
+  
   // If we want to provide our own Jacobian, set the interface function to Sundials
   if(as<int>(settings["jacobian"]) == 1) {
     flag = CVDlsSetDenseJacFn(cvode_mem, cvode_to_Cpp_stl_jac);
@@ -178,6 +187,7 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
     if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);} 
     ::Rf_error("Error in the CVodeSetMaxOrd function");
   }
+  
   // Set the initial step size
   flag = CVodeSetInitStep(cvode_mem, settings["hini"]);  
   if(flag < 0.0) {
@@ -193,6 +203,7 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
     if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);} 
     ::Rf_error("Error in the CVodeSetMinStep function");
   }
+  
   // Set the maximum step size
   flag = CVodeSetMaxStep(cvode_mem, settings["hmax"]);  
   if(flag < 0.0) {
@@ -200,6 +211,7 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
     if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);} 
     ::Rf_error("Error in the CVodeSetMaxStep function");  
   }
+  
   // Set the maximum number of error test fails
   flag = CVodeSetMaxErrTestFails(cvode_mem, settings["maxerr"]);  
   if(flag < 0.0) {
@@ -207,6 +219,7 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
     if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);} 
     ::Rf_error("Error in the CVodeSetMaxErrTestFails function");  
   }
+  
   // Set the maximum number of nonlinear iterations per step
   flag = CVodeSetMaxNonlinIters(cvode_mem, settings["maxnonlin"]);  
   if(flag < 0.0) {
@@ -214,6 +227,7 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
     if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);} 
     ::Rf_error("Error in the CVodeSetMaxNonlinIters function");  
   }
+  
   // Set the maximum number of convergence failures
   flag = CVodeSetMaxConvFails(cvode_mem, settings["maxconvfail"]);   
   if(flag < 0.0) {
@@ -221,8 +235,9 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
     if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);} 
     ::Rf_error("Error in the CVodeSetMaxConvFails function");
   }
+  
   // Set stability limit detection
-  flag = CVodeSetStabLimDet(cvode_mem, true);  
+  flag = CVodeSetStabLimDet(cvode_mem, as<bool>(settings["stability"]));  
   if(flag < 0.0) {
     if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
     if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);} 

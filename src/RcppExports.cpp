@@ -9,9 +9,9 @@
 
 using namespace Rcpp;
 
-// cvode_Cpp_stl
-NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_, NumericVector parameters_, List forcings_data_, List settings, SEXP model_, SEXP jacobian_);
-static SEXP RcppSundials_cvode_Cpp_stl_try(SEXP timesSEXP, SEXP states_SEXP, SEXP parameters_SEXP, SEXP forcings_data_SEXP, SEXP settingsSEXP, SEXP model_SEXP, SEXP jacobian_SEXP) {
+// wrap_cvodes
+NumericMatrix wrap_cvodes(NumericVector times, NumericVector states_, NumericVector parameters_, List forcings_data_, List settings, SEXP model_, SEXP jacobian_);
+static SEXP RcppSundials_wrap_cvodes_try(SEXP timesSEXP, SEXP states_SEXP, SEXP parameters_SEXP, SEXP forcings_data_SEXP, SEXP settingsSEXP, SEXP model_SEXP, SEXP jacobian_SEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::traits::input_parameter< NumericVector >::type times(timesSEXP);
@@ -21,15 +21,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< List >::type settings(settingsSEXP);
     Rcpp::traits::input_parameter< SEXP >::type model_(model_SEXP);
     Rcpp::traits::input_parameter< SEXP >::type jacobian_(jacobian_SEXP);
-    __result = Rcpp::wrap(cvode_Cpp_stl(times, states_, parameters_, forcings_data_, settings, model_, jacobian_));
+    __result = Rcpp::wrap(wrap_cvodes(times, states_, parameters_, forcings_data_, settings, model_, jacobian_));
     return __result;
 END_RCPP_RETURN_ERROR
 }
-RcppExport SEXP RcppSundials_cvode_Cpp_stl(SEXP timesSEXP, SEXP states_SEXP, SEXP parameters_SEXP, SEXP forcings_data_SEXP, SEXP settingsSEXP, SEXP model_SEXP, SEXP jacobian_SEXP) {
+RcppExport SEXP RcppSundials_wrap_cvodes(SEXP timesSEXP, SEXP states_SEXP, SEXP parameters_SEXP, SEXP forcings_data_SEXP, SEXP settingsSEXP, SEXP model_SEXP, SEXP jacobian_SEXP) {
     SEXP __result;
     {
         Rcpp::RNGScope __rngScope;
-        __result = PROTECT(RcppSundials_cvode_Cpp_stl_try(timesSEXP, states_SEXP, parameters_SEXP, forcings_data_SEXP, settingsSEXP, model_SEXP, jacobian_SEXP));
+        __result = PROTECT(RcppSundials_wrap_cvodes_try(timesSEXP, states_SEXP, parameters_SEXP, forcings_data_SEXP, settingsSEXP, model_SEXP, jacobian_SEXP));
     }
     Rboolean __isInterrupt = Rf_inherits(__result, "interrupted-error");
     if (__isInterrupt) {
@@ -167,7 +167,7 @@ END_RCPP
 static int RcppSundials_RcppExport_validate(const char* sig) { 
     static std::set<std::string> signatures;
     if (signatures.empty()) {
-        signatures.insert("NumericMatrix(*cvode_Cpp_stl)(NumericVector,NumericVector,NumericVector,List,List,SEXP,SEXP)");
+        signatures.insert("NumericMatrix(*wrap_cvodes)(NumericVector,NumericVector,NumericVector,List,List,SEXP,SEXP)");
         signatures.insert("List(*cvode_calc_derivs)(SEXP,NumericVector,NumericVector,NumericVector,List)");
         signatures.insert("NumericMatrix(*cvode_calc_jac)(SEXP,NumericVector,NumericVector,NumericVector,List)");
     }
@@ -176,7 +176,7 @@ static int RcppSundials_RcppExport_validate(const char* sig) {
 
 // registerCCallable (register entry points for exported C++ functions)
 RcppExport SEXP RcppSundials_RcppExport_registerCCallable() { 
-    R_RegisterCCallable("RcppSundials", "RcppSundials_cvode_Cpp_stl", (DL_FUNC)RcppSundials_cvode_Cpp_stl_try);
+    R_RegisterCCallable("RcppSundials", "RcppSundials_wrap_cvodes", (DL_FUNC)RcppSundials_wrap_cvodes_try);
     R_RegisterCCallable("RcppSundials", "RcppSundials_cvode_calc_derivs", (DL_FUNC)RcppSundials_cvode_calc_derivs_try);
     R_RegisterCCallable("RcppSundials", "RcppSundials_cvode_calc_jac", (DL_FUNC)RcppSundials_cvode_calc_jac_try);
     R_RegisterCCallable("RcppSundials", "RcppSundials_RcppExport_validate", (DL_FUNC)RcppSundials_RcppExport_validate);

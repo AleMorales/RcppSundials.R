@@ -25,17 +25,17 @@ namespace RcppSundials {
         }
     }
 
-    inline NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_, NumericVector parameters_, List forcings_data_, List settings, SEXP model_, SEXP jacobian_) {
-        typedef SEXP(*Ptr_cvode_Cpp_stl)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
-        static Ptr_cvode_Cpp_stl p_cvode_Cpp_stl = NULL;
-        if (p_cvode_Cpp_stl == NULL) {
-            validateSignature("NumericMatrix(*cvode_Cpp_stl)(NumericVector,NumericVector,NumericVector,List,List,SEXP,SEXP)");
-            p_cvode_Cpp_stl = (Ptr_cvode_Cpp_stl)R_GetCCallable("RcppSundials", "RcppSundials_cvode_Cpp_stl");
+    inline NumericMatrix wrap_cvodes(NumericVector times, NumericVector states_, NumericVector parameters_, List forcings_data_, List settings, SEXP model_, SEXP jacobian_) {
+        typedef SEXP(*Ptr_wrap_cvodes)(SEXP,SEXP,SEXP,SEXP,SEXP,SEXP,SEXP);
+        static Ptr_wrap_cvodes p_wrap_cvodes = NULL;
+        if (p_wrap_cvodes == NULL) {
+            validateSignature("NumericMatrix(*wrap_cvodes)(NumericVector,NumericVector,NumericVector,List,List,SEXP,SEXP)");
+            p_wrap_cvodes = (Ptr_wrap_cvodes)R_GetCCallable("RcppSundials", "RcppSundials_wrap_cvodes");
         }
         RObject __result;
         {
             RNGScope __rngScope;
-            __result = p_cvode_Cpp_stl(Rcpp::wrap(times), Rcpp::wrap(states_), Rcpp::wrap(parameters_), Rcpp::wrap(forcings_data_), Rcpp::wrap(settings), Rcpp::wrap(model_), Rcpp::wrap(jacobian_));
+            __result = p_wrap_cvodes(Rcpp::wrap(times), Rcpp::wrap(states_), Rcpp::wrap(parameters_), Rcpp::wrap(forcings_data_), Rcpp::wrap(settings), Rcpp::wrap(model_), Rcpp::wrap(jacobian_));
         }
         if (__result.inherits("interrupted-error"))
             throw Rcpp::internal::InterruptedException();
