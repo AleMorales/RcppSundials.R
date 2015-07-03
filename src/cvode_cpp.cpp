@@ -314,7 +314,7 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
       if(as<bool>(settings["positive"])) {
         for(auto h = 0; h < neq; h++) {
          if(NV_Ith_S(y,h) < as<double>(settings["minimum"])) {
-           Rcout << "The state variable at positon " << h << " became smaller than minimum: " << NV_Ith_S(y,h) << '\n';
+           Rcout << "The state variable at position " << h + 1 << " became smaller than minimum: " << NV_Ith_S(y,h) << " at time: " << times[i] << '\n';
            if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
            if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);}  
            ::Rf_error("At least one of the states became smaller than minimum"); 
