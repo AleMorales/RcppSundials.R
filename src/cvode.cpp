@@ -1,9 +1,9 @@
 #define ARMA_DONT_USE_CXX11
 #include <RcppArmadillo.h>
 #include <Rcpp.h>
-#include <cvode/cvode.h>           // CVODES functions and constants
+#include <cvodes/cvodes.h>           // CVODES functions and constants
 #include <nvector/nvector_serial.h>  // Serial N_Vector
-#include <cvode/cvode_dense.h>     // CVDense
+#include <cvodes/cvodes_dense.h>     // CVDense
 #include <datatypes.h>
 #include <string> 
 #include <limits> 
