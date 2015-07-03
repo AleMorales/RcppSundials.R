@@ -210,6 +210,14 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
     if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);} 
     ::Rf_error("Error in the CVodeSetMaxConvFails function");
   }
+  // Set stability limit detection
+  flag = CVodeSetStabLimDet(cvode_mem, true);  
+  if(flag < 0.0) {
+    if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
+    if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);} 
+    ::Rf_error("Error in the CVodeSetStabLimDet function");  
+  }
+  
   /*
    * 
    Make a first call to the model to check that everything is ok and retrieve the number of observed variables
