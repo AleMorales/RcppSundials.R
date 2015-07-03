@@ -273,8 +273,8 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
   vector<int> extract_states = as<vector<int>>(settings["which_states"]);
   vector<int> extract_observed = as<vector<int>>(settings["which_observed"]);
   
-  mat output(times.size(), extract_states.size() + extract_observed.size() + 1);
-  output(0,0) = times[0];
+  mat output(times.size(), extract_states.size() + extract_observed.size() + 1, arma::fill::zeros);
+  output.at(0,0) = times[0];
   //for(auto i = 0; i < neq; i++) {
   //    output(0,i+1) = states[i];
   for(auto it = extract_states.begin(); it != extract_states.end(); it++) {
@@ -284,8 +284,9 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
       if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);}        
       ::Rf_error("Simulation exited because of error in extracting state variables");
     }
-    output[0,*it] = NV_Ith_S(y,*it - 1);
+    output.at(0,*it) = NV_Ith_S(y,*it - 1);
   }     
+
   if(extract_observed.size()  > 0) {
       //for(auto i = 0; i < nder; i++)  
       //    output(0,i + 1 + neq) = observed[i];
@@ -296,7 +297,7 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
           if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);}            
           ::Rf_error("Simulation exited because of error in extracting observed variables");
         }
-        output[0,*it + extract_states.size()] = observed[*it - 1];
+        output.at(0,*it + extract_states.size()) = observed[*it - 1];
       }     
   }
   
@@ -307,6 +308,7 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
    Main time loop. Each timestep call cvode. Handle exceptions and fill up output
    *
    */
+
   double t = times[0];
   for(int i = 1; i < times.size(); i++) {
     try {
@@ -364,13 +366,13 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
     }
 
      // Write to the output matrix the new values of state variables and time
-    output(i,0) = times[i];
+    output.at(i,0) = times[i];
     //for(auto h = 0; h < neq; h++) output(i,h + 1) = NV_Ith_S(y,h);
     for(auto it = extract_states.begin(); it != extract_states.end(); it++) {
-      output[i,*it] = NV_Ith_S(y,*it - 1);
+      output.at(i,*it) = NV_Ith_S(y,*it - 1);
     }    
   }
-  
+
   // If we have observed variables we call the model function again
   if(extract_observed.size() > 0 && flag >= 0.0) {
     for(unsigned i = 1; i < times.size(); i++) {
@@ -384,7 +386,7 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
       // Derived variables already stored by the interface function
       //for(auto j = 0; j < nder; j++)  output(i,j + 1 + neq) = observed[j]; 
       for(auto it = extract_observed.begin(); it != extract_observed.end(); it++) {
-        output[i,*it + extract_states.size()] = observed[*it - 1];
+        output.at(i,*it + extract_states.size()) = observed[*it - 1];
       }      
     } 
   }
@@ -392,7 +394,7 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
   // De-allocate the N_Vector and the cvode_mem structures
   if(y == nullptr) {free(y);} else {N_VDestroy_Serial(y);}
   if(cvode_mem == nullptr) {free(cvode_mem);} else {CVodeFree(&cvode_mem);}     
-  
+
   return wrap(output);
 }
 
