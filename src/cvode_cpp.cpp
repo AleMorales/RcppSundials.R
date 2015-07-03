@@ -308,7 +308,7 @@ NumericMatrix cvode_Cpp_stl(NumericVector times, NumericVector states_,
    *
    */
   double t = times[0];
-  for(unsigned i = 1; i < times.size(); i++) {
+  for(int i = 1; i < times.size(); i++) {
     try {
       flag = CVode(cvode_mem, times[i], y, &t, CV_NORMAL);
       if(as<bool>(settings["positive"])) {
